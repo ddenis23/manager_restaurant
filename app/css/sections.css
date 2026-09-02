@@ -1,0 +1,42 @@
+/* ── SECTIONS BASE ── */
+.section { display: none; }
+.section.active { display: block; animation: fadeIn .15s ease; }
+
+@media (min-width: 768px) {
+  /* Toate sectiunile: flex column, inaltime 100%, fara scroll propriu */
+  #sec-ingrediente,
+  #sec-retete,
+  #sec-comenzi,
+  #sec-calendar,
+  #sec-personal {
+    height: 100%;
+    overflow: hidden;
+    max-width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Sectiunile inactive: complet ascunse */
+  .section { display: none !important; }
+
+  /* Toate sectiunile active: flex column */
+  #sec-calendar.active,
+  #sec-ingrediente.active,
+  #sec-retete.active,
+  #sec-comenzi.active,
+  #sec-personal.active {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  /* Page-header in sectiunile cu split */
+  #sec-ingrediente .page-header,
+  #sec-retete .page-header,
+  #sec-comenzi .page-header,
+  #sec-personal .page-header {
+    padding: 20px 28px 16px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+}

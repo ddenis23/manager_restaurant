@@ -1,0 +1,285 @@
+/* ══════════════════════════════════════════════════════
+   CALENDAR — animations & desktop split layout
+══════════════════════════════════════════════════════ */
+
+/* Day button base */
+.cal-day {
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  position: relative;
+  width: 100%;
+  transition: background .15s var(--ease),
+              color .15s var(--ease),
+              border-color .15s var(--ease),
+              transform .12s var(--ease),
+              box-shadow .15s var(--ease);
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+.cal-day:hover {
+  background: var(--bg4);
+  color: var(--text);
+  border-color: var(--border2);
+  transform: scale(1.08);
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+.cal-day:active { transform: scale(.94); }
+.cal-day.is-today {
+  background: var(--gold-dim);
+  color: var(--gold3);
+  border-color: var(--gold-line);
+  font-weight: 700;
+}
+.cal-day.is-today:hover {
+  background: rgba(184,150,12,.18);
+  box-shadow: 0 4px 16px rgba(184,150,12,.2);
+}
+.cal-day.is-selected {
+  background: var(--gold2);
+  color: #0a0800;
+  border-color: var(--gold2);
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(184,150,12,.35);
+}
+.cal-day.is-selected:hover { transform: scale(1.05); }
+.cal-day.has-events { color: var(--text); }
+
+/* Month nav buttons */
+.cal-nav-btn {
+  background: var(--bg4);
+  color: var(--text3);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-sm);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background .15s var(--ease),
+              color .15s var(--ease),
+              border-color .15s var(--ease),
+              transform .1s var(--ease);
+  letter-spacing: .02em;
+}
+.cal-nav-btn:hover {
+  background: var(--bg5);
+  color: var(--text);
+  border-color: var(--border3);
+  transform: translateX(-2px);
+}
+.cal-nav-btn.next:hover { transform: translateX(2px); }
+.cal-nav-btn:active { transform: scale(.93); }
+
+/* ── Event indicator bar — jos in celula ── */
+.cal-day { position: relative; overflow: hidden; }
+
+/* Bara colorata care indica urgenta */
+.cal-ev-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 0 0 7px 7px;
+  transition: height .15s var(--ease), opacity .15s var(--ease);
+  opacity: .85;
+}
+.cal-day:hover .cal-ev-bar { height: 4px; opacity: 1; }
+.cal-day.is-selected .cal-ev-bar { height: 3px; opacity: .5; }
+
+/* Urgenta: urgent=rosu, soon=ambra, normal=aur, far=verde */
+.cal-ev-bar.urgent { background: var(--red2); box-shadow: 0 0 6px rgba(212,112,112,.5); }
+.cal-ev-bar.soon   { background: var(--amber); box-shadow: 0 0 6px rgba(192,120,40,.4); }
+.cal-ev-bar.normal { background: var(--gold2); box-shadow: 0 0 6px rgba(212,172,36,.35); }
+.cal-ev-bar.far    { background: var(--green2); box-shadow: 0 0 6px rgba(106,184,130,.3); }
+
+/* Contor evenimente — colt dreapta sus */
+.cal-ev-count {
+  position: absolute;
+  top: 3px; right: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text3);
+  transition: color .15s var(--ease);
+  font-family: var(--font-body);
+}
+.cal-day:hover .cal-ev-count { color: var(--text2); }
+.cal-day.is-selected .cal-ev-count { color: rgba(10,8,0,.6); }
+.cal-day.is-today .cal-ev-count { color: var(--gold); }
+
+/* Background subtil pe zilele cu evenimente */
+.cal-day.has-events:not(.is-selected):not(.is-today) {
+  background: rgba(184,150,12,.04);
+  border-color: rgba(184,150,12,.1);
+}
+.cal-day.has-events:hover:not(.is-selected) {
+  background: rgba(184,150,12,.09);
+  border-color: rgba(184,150,12,.2);
+}
+
+/* Event card — animated entry */
+.ev-card {
+  animation: evCardIn .2s var(--ease) both;
+}
+.ev-card:nth-child(1) { animation-delay: .03s; }
+.ev-card:nth-child(2) { animation-delay: .06s; }
+.ev-card:nth-child(3) { animation-delay: .09s; }
+.ev-card:nth-child(4) { animation-delay: .12s; }
+.ev-card:nth-child(5) { animation-delay: .15s; }
+
+/* + Eveniment button micro-anim */
+.add-ev-btn {
+  transition: background .15s var(--ease),
+              transform .12s var(--ease),
+              box-shadow .15s var(--ease) !important;
+}
+.add-ev-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(184,150,12,.3) !important;
+}
+.add-ev-btn:active { transform: scale(.95) !important; }
+
+/* Desktop split: calendar LEFT (flex), events RIGHT (flex, resizable) */
+.cal-split { display: block; }
+
+@media (min-width: 768px) {
+  .cal-split {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* Header calendar (page-header) */
+  #sec-calendar .page-header {
+    padding: 20px 24px 16px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  /* Stanga: calendarul propriu-zis — flex 0 0 auto, width JS-controlled */
+  .cal-left {
+    flex: 0 0 auto;
+    width: 62%; /* default, overridden by JS */
+    min-width: 240px;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 20px 16px;
+  }
+  .cal-left .card {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+  .cal-left .card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: transparent;
+    background: transparent;
+  }
+
+  /* Dreapta: lista evenimente — flex 1, SCROLL DOAR AICI */
+  .cal-right {
+    flex: 1;
+    min-width: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    padding: 16px 16px 24px;
+  }
+
+  /* Grid zile umple tot spatiul disponibil vertical */
+  .cal-day-grid-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  #sec-calendar .dGrid-el {
+    flex: 1;
+    grid-auto-rows: 1fr;
+  }
+
+  .cal-day { font-size: 14px; }
+}
+
+@media (min-width: 1100px) {
+  .cal-left  { padding: 24px 24px 20px; }
+  .cal-right { padding: 20px 20px 28px; }
+  .cal-day   { font-size: 15px; }
+}
+
+@media (min-width: 1400px) {
+  .cal-left  { padding: 28px 28px 24px; }
+  .cal-right { padding: 24px 24px 32px; }
+  .cal-day   { font-size: 16px; }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .cal-day { font-size: 13px; min-height: 38px; aspect-ratio: 1; height: auto; }
+  .cal-right-title {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--text3);
+    padding: 14px 0 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cal-right-title::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+}
+
+/* Shared right-title style (desktop) */
+@media (min-width: 768px) {
+  .cal-right-title {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cal-right-title::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+}

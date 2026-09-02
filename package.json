@@ -1,0 +1,36 @@
+{
+  "name": "restaurant-manager",
+  "version": "1.0.0",
+  "description": "Gestiune Evenimente & Furnizori",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --win"
+  },
+  "build": {
+    "appId": "ro.restaurantmanager.app",
+    "productName": "RestaurantManager",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "app/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "RestaurantManager"
+    },
+    "files": [
+      "app/**/*",
+      "main.js"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}

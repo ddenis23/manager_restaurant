@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KitchenManager">
+<title>KitchenManager</title>
+
+<!-- CSS: variables → layout → components → calendar → sections → login → animations -->
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/calendar.css">
+<link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/login.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-monogram">K</div>
+      <div class="login-title"><em>Kitchen</em>Manager</div>
+      <div class="login-sub">Gestiune evenimente &amp; furnizori</div>
+    </div>
+
+    <form onsubmit="doLogin(event)">
+      <div class="login-field">
+        <label class="login-label" for="l-user">Utilizator</label>
+        <input id="l-user" type="text" placeholder="Introduceți utilizatorul" autocomplete="username" spellcheck="false">
+      </div>
+      <div class="login-field">
+        <label class="login-label" for="l-pass">Parolă</label>
+        <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn">Autentificare</button>
+      <div id="login-error" class="login-error">Utilizator sau parolă incorect.</div>
+    </form>
+
+    <div class="login-footer">KitchenManager &copy; 2025 &nbsp;·&nbsp; Acces securizat</div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+  <!-- ── SIDEBAR (desktop only) ── -->
+  <div id="sidebar">
+    <div id="sidebar-brand">
+      <div class="sidebar-logo">K</div>
+      <div>
+        <div class="sidebar-name"><em>Kitchen</em>Manager</div>
+        <div class="sidebar-sub">Gestiune evenimente</div>
+      </div>
+    </div>
+
+    <nav id="sidebar-nav">
+      <button class="snav-btn active" onclick="switchTab('calendar')" id="nav-calendar" data-tab="calendar">
+        <span class="snav-icon">📅</span>
+        <span class="snav-label">Calendar</span>
+        <span id="ev-badge" style="display:none;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:4px;padding:1px 5px;min-width:14px;text-align:center;margin-left:auto"></span>
+      </button>
+      <button class="snav-btn" onclick="switchTab('comenzi')" id="nav-comenzi" data-tab="comenzi">
+        <span class="snav-icon">🛒</span>
+        <span class="snav-label">Comenzi</span>
+      </button>
+      <button class="snav-btn" onclick="switchTab('retete')" id="nav-retete" data-tab="retete">
+        <span class="snav-icon">🍽️</span>
+        <span class="snav-label">Rețete</span>
+      </button>
+      <button class="snav-btn" onclick="switchTab('ingrediente')" id="nav-ingrediente" data-tab="ingrediente">
+        <span class="snav-icon">📦</span>
+        <span class="snav-label">Ingrediente</span>
+      </button>
+      <div class="snav-divider"></div>
+      <button class="snav-btn" onclick="switchTab('personal')" id="nav-personal" data-tab="personal">
+        <span class="snav-icon">👥</span>
+        <span class="snav-label">Program</span>
+      </button>
+    </nav>
+
+    <div id="sidebar-footer">
+      <button onclick="exportBackup()" class="sfooter-btn">💾 <span>Backup</span></button>
+      <button onclick="document.getElementById('import-input').click()" class="sfooter-btn">📂 <span>Restore</span></button>
+      <input type="file" id="import-input" accept=".json" style="display:none" onchange="importBackup(event)">
+      <button onclick="doLogout()" class="sfooter-btn" style="color:var(--red2);border-color:rgba(184,80,80,.25)">🚪 <span>Ieșire</span></button>
+    </div>
+
+  </div>
+
+  <!-- ── CONTENT AREA ── -->
+  <div id="content-wrap">
+
+    <!-- Mobile header (hidden on desktop) -->
+    <div id="header">
+      <div id="header-inner">
+        <div>
+          <div class="header-logo"><em>Kitchen</em>Manager</div>
+          <div class="header-sub">Gestiune evenimente &amp; furnizori</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button onclick="exportBackup()" style="background:var(--bg4);color:var(--green2);border:1px solid var(--border2);border-radius:var(--r-sm);padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--font-body)">💾</button>
+          <button onclick="document.getElementById('import-input-mob').click()" style="background:var(--bg4);color:var(--blue2);border:1px solid var(--border2);border-radius:var(--r-sm);padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--font-body)">📂</button>
+          <input type="file" id="import-input-mob" accept=".json" style="display:none" onchange="importBackup(event)">
+          <button onclick="doLogout()" style="background:var(--red-dim);color:var(--red2);border:1px solid rgba(184,80,80,.25);border-radius:var(--r-sm);padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--font-body)">🚪</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div id="main">
+      <div id="sec-ingrediente" class="section"></div>
+      <div id="sec-retete" class="section"></div>
+      <div id="sec-calendar" class="section active"></div>
+      <div id="sec-comenzi" class="section"></div>
+      <div id="sec-personal" class="section"></div>
+    </div>
+
+    <!-- Mobile bottom nav (hidden on desktop) -->
+    <div id="nav">
+      <div id="nav-inner">
+        <button class="nav-btn active" onclick="switchTab('calendar')" data-tab="calendar">
+          <span class="nav-icon">📅</span><span>Calendar</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('comenzi')" data-tab="comenzi">
+          <span class="nav-icon">🛒</span><span>Comenzi</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('retete')" data-tab="retete">
+          <span class="nav-icon">🍽️</span><span>Rețete</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('ingrediente')" data-tab="ingrediente">
+          <span class="nav-icon">📦</span><span>Ingrediente</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('personal')" data-tab="personal">
+          <span class="nav-icon">👥</span><span>Program</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content-wrap -->
+</div>
+
+<!-- ExcelJS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+
+<!-- JS: data → utils → auth → calendar → ingredients → recipes → orders → staff → app -->
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/ingredients.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/orders.js"></script>
+<script src="js/staff.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
