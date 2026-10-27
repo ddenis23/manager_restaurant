@@ -1,103 +1,77 @@
 # Kitchen Operations Tool
 
-> **KitchenManager** — aplicație desktop pentru gestiunea unui restaurant: evenimente, comenzi către furnizori, rețete, ingrediente și programul personalului.
+> **RestaurantManager** — a Windows desktop app for running a restaurant kitchen: events, supplier orders, recipes, ingredients and staff schedules. 🇷🇴 [Versiunea în română](README.ro.md)
 
-Construită cu **Electron** peste un front-end scris în JavaScript vanilla, HTML5 și CSS3 — fără framework, fără backend. Toate datele sunt stocate local, pe calculatorul utilizatorului.
+I built it to solve real problems from my own workplace as a cook / shift chef. It runs on **Electron** with a vanilla JavaScript, HTML5 and CSS3 front end — no framework, no backend. All data stays on the user's computer.
 
----
+## Features
 
-## Funcționalități
-
-| Modul | Descriere |
+| Module | What it does |
 |---|---|
-| 📅 **Calendar** | Planificarea evenimentelor pe zile, cu număr de porții, rețete asociate și calculul automat al ingredientelor necesare. Export Excel per eveniment. |
-| 🛒 **Comenzi** | Generarea listelor de aprovizionare grupate pe categorii și furnizori (legume & fructe, aprovizionare generală, altele), cu export Excel. |
-| 🍽️ **Rețete** | Rețete cu ingrediente și cantități, în trei moduri de calcul: per bucată, per greutate sau per rețetă. Export individual sau al întregului recepetar. |
-| 📦 **Ingrediente** | Nomenclator de ingrediente cu unitate de măsură, categorie și furnizor asociat. |
-| 👥 **Program** | Planificator de ture pentru personal, cu vizualizare lunară sau săptămânală, zoom pe tabel și export Excel. |
-| 💾 **Backup / Restore** | Salvarea completă a bazei de date într-un fișier `.json` și restaurarea ei. |
+| 📅 **Calendar** | Plan events by day with number of servings and linked recipes; calculates the required ingredients automatically. Excel export per event. |
+| 🛒 **Orders** | Generates supply lists grouped by category and supplier (produce, general supplies, other), with Excel export. |
+| 🍽️ **Recipes** | Recipes with ingredients and quantities in three calculation modes: per piece, per weight or per batch. Export a single recipe or the whole recipe book. |
+| 📦 **Ingredients** | Ingredient catalogue with unit of measure, category and supplier. |
+| 👥 **Staff schedule** | Shift planner with monthly or weekly view, table zoom and Excel export. |
+| 💾 **Backup / Restore** | Saves the whole database to a `.json` file and restores it. |
 
-Interfața este responsivă: sidebar pe desktop, bottom navigation pe ecrane mici. Tema este dark, cu un design system propriu construit pe CSS Custom Properties.
+Responsive UI: sidebar on desktop, bottom navigation on small screens. Dark theme with a custom design system built on CSS Custom Properties.
 
----
+## Tech stack
 
-## Stack tehnic
+- **Electron 34** — cross-platform desktop shell (`contextIsolation` on, `nodeIntegration` off)
+- **JavaScript ES6+** — vanilla, no framework
+- **HTML5 / CSS3** — Custom Properties, Grid & Flexbox, media queries, animations
+- **ExcelJS** — `.xlsx` report generation
+- **Web Storage API** — data persistence (`localStorage`) and session (`sessionStorage`)
+- **electron-builder 25** — packaging and Windows installer (NSIS)
 
-- **Electron 34** — shell desktop cross-platform (`contextIsolation` activ, `nodeIntegration` dezactivat)
-- **JavaScript ES6+** — logica aplicației, vanilla, fără framework
-- **HTML5 / CSS3** — CSS Custom Properties, Grid & Flexbox, media queries, animații
-- **ExcelJS 4.3** — generarea rapoartelor `.xlsx`
-- **Web Storage API** — persistența datelor (`localStorage`) și a sesiunii (`sessionStorage`)
-- **electron-builder 25** — împachetare și installer Windows (NSIS)
+## Install and run
 
----
-
-## Instalare și rulare
-
-Necesită [Node.js](https://nodejs.org/) 18 sau mai nou.
+Requires [Node.js](https://nodejs.org/) 18 or newer.
 
 ```bash
-git clone https://github.com/ddenis23/Kitchen-Operations-Tool.git
-cd Kitchen-Operations-Tool
+git clone https://github.com/ddenis23/manager_restaurant.git
+cd manager_restaurant
 npm install
 npm start
 ```
 
-### Build installer Windows
+### Build the Windows installer
 
 ```bash
 npm run build
 ```
 
-Installer-ul rezultat (`RestaurantManager Setup <versiune>.exe`, conform `productName` din `package.json`) apare în directorul `dist/`.
+The installer (`RestaurantManager Setup <version>.exe`) is created in `dist/`.
 
----
+## Login
 
-## Autentificare
+The app opens with a login screen. The default credentials are defined in [`app/js/auth.js`](app/js/auth.js) and should be changed before real use.
 
-Aplicația pornește cu un ecran de login. Credențialele implicite sunt definite în [`app/js/auth.js`](app/js/auth.js) și trebuie schimbate înainte de utilizare reală:
+> ⚠️ This is a local UI gate, not a security mechanism. Data is stored unencrypted in `localStorage`.
 
-```js
-var USERS = { admin: 'unda' };
-```
-
-> ⚠️ Autentificarea este una locală, de tip *gate* pentru interfață — nu este un mecanism de securitate. Datele sunt stocate necriptat în `localStorage`.
-
----
-
-## Structura proiectului
+## Project structure
 
 ```
 .
-├── main.js                 # Electron main process — fereastră, meniu, linkuri externe
-├── package.json            # dependențe + configurație electron-builder
+├── main.js                 # Electron main process: window, menu, external links
+├── package.json            # dependencies + electron-builder config
 └── app/
-    ├── index.html          # shell-ul aplicației, ecranul de login, navigația
-    ├── icon.png            # iconița aplicației
-    ├── css/
-    │   ├── variables.css   # design tokens: paletă, tipografie, spacing
-    │   ├── layout.css      # sidebar, header, bottom nav, grid principal
-    │   ├── components.css  # butoane, carduri, modale, tabele
-    │   ├── calendar.css    # stiluri specifice calendarului
-    │   ├── sections.css
-    │   ├── login.css
-    │   └── animations.css
+    ├── index.html          # app shell, login screen, navigation
+    ├── css/                # design tokens, layout, components, per-module styles
     └── js/
-        ├── data.js         # helper localStorage, constante, date demo
-        ├── utils.js        # helpere DOM, modale, workbook Excel, resize
+        ├── data.js         # localStorage helper, constants, demo data
+        ├── utils.js        # DOM helpers, modals, Excel workbook helpers
         ├── auth.js         # login / logout
-        ├── calendar.js     # modulul Calendar + exporturi
-        ├── ingredients.js  # modulul Ingrediente
-        ├── recipes.js      # modulul Rețete
-        ├── orders.js       # modulul Comenzi
-        ├── staff.js        # modulul Program personal
-        └── app.js          # backup/restore, tab switching, init
+        ├── calendar.js     # Calendar module + exports
+        ├── ingredients.js  # Ingredients module
+        ├── recipes.js      # Recipes module
+        ├── orders.js       # Orders module
+        ├── staff.js        # Staff schedule module
+        └── app.js          # backup/restore, tab routing, init
 ```
 
-Scripturile sunt încărcate în ordine în `index.html`; fiecare modul își expune funcțiile de randare (`renderCal`, `renderOrders`, …) apelate de router-ul de tab-uri din `app.js`.
-
----
-
-## Licență
+## License
 
 MIT
